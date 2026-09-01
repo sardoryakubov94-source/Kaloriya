@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>KaloNazorat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #FAF5EC;
+    --cream-2: #F1E9DA;
+    --forest: #33422E;
+    --forest-deep: #212B1D;
+    --marigold: #E3982B;
+    --marigold-soft: #F3C878;
+    --berry: #A23E3E;
+    --ink: #24241F;
+    --ink-soft: #6F6A5E;
+    --line: #E4DBC8;
+    --white: #FFFFFF;
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:none;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces','Georgia',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    background:var(--cream);
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- Onboarding ---------- */
+  .onb-screen{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding:32px 26px 26px;
+    animation:fadeIn .35s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .onb-progress{
+    display:flex;
+    gap:6px;
+    margin-bottom:34px;
+  }
+  .onb-dot{
+    flex:1;
+    height:4px;
+    border-radius:4px;
+    background:var(--line);
+    overflow:hidden;
+  }
+  .onb-dot.done{background:var(--forest);}
+  .onb-dot.active{background:var(--marigold);}
+
+  .onb-eyebrow{
+    color:var(--marigold);
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .onb-title{
+    font-size:30px;
+    line-height:1.15;
+    color:var(--forest-deep);
+    margin:0 0 10px;
+  }
+  .onb-sub{
+    color:var(--ink-soft);
+    font-size:15px;
+    line-height:1.5;
+    margin:0 0 28px;
+    max-width:34ch;
+  }
+  .onb-body{flex:1;}
+
+  .choice-grid{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .choice-card{
+    border:1.5px solid var(--line);
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:18px 20px;
+    font-size:16px;
+    font-weight:500;
+    color:var(--forest-deep);
+    cursor:pointer;
+    text-align:left;
+    transition:border-color .15s, background .15s;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .choice-card:active{transform:scale(.99);}
+  .choice-card.selected{
+    border-color:var(--forest);
+    background:var(--forest);
+    color:var(--white);
+  }
+
+  .num-input-wrap{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    border-bottom:2px solid var(--forest);
+    padding-bottom:14px;
+  }
+  .num-input{
+    font-family:'Fraunces',serif;
+    font-size:56px;
+    font-weight:600;
+    color:var(--forest-deep);
+    border:none;
+    background:transparent;
+    width:100%;
+    outline:none;
+  }
+  .num-unit{
+    font-size:18px;
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  .quick-adjust{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  .adjust-btn{
+    border:1.5px solid var(--line);
+    background:var(--white);
+    border-radius:999px;
+    padding:9px 18px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--forest-deep);
+    cursor:pointer;
+  }
+
+  .onb-footer{
+    display:flex;
+    gap:12px;
+    padding-top:20px;
+  }
+  .btn{
+    flex:1;
+    border:none;
+    border-radius:999px;
+    padding:16px 20px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .btn-primary{
+    background:var(--forest);
+    color:var(--white);
+  }
+  .btn-primary:disabled{
+    background:var(--line);
+    color:var(--ink-soft);
+    cursor:not-allowed;
+  }
+  .btn-ghost{
+    flex:none;
+    background:transparent;
+    color:var(--ink-soft);
+    padding:16px 8px;
+  }
+
+  /* ---------- Result screen ---------- */
+  .result-card{
+    background:var(--forest-deep);
+    border-radius:var(--radius-lg);
+    padding:36px 28px;
+    color:var(--cream);
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .result-kcal{
+    font-family:'Fraunces',serif;
+    font-size:64px;
+    font-weight:600;
+    line-height:1;
+    color:var(--marigold-soft);
+  }
+  .result-label{
+    font-size:14px;
+    color:#C9C2AC;
+    margin-top:6px;
+  }
+  .macro-row{
+    display:flex;
+    gap:10px;
+    margin-top:22px;
+  }
+  .macro-pill{
+    flex:1;
+    background:rgba(255,255,255,.08);
+    border-radius:var(--radius-sm);
+    padding:12px 8px;
+  }
+  .macro-pill .v{font-size:18px;font-weight:700;}
+  .macro-pill .l{font-size:11px;color:#C9C2AC;margin-top:2px;}
+
+  /* ---------- Home ---------- */
+  #home{padding-bottom:110px;}
+  .home-header{
+    background:linear-gradient(160deg, var(--forest-deep), var(--forest) 75%);
+    border-radius:0 0 32px 32px;
+    padding:26px 22px 30px;
+    color:var(--cream);
+  }
+  .home-topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+  }
+  .home-topbar .brand{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+  }
+  .icon-btn{
+    width:38px;height:38px;
+    border-radius:50%;
+    background:rgba(255,255,255,.12);
+    border:none;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--cream);
+    cursor:pointer;
+  }
+  .date-strip{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .date-chip{
+    text-align:center;
+    flex:1;
+    padding:6px 0;
+  }
+  .date-chip .d{font-size:11px;color:#B9B29B;margin-bottom:6px;}
+  .date-chip .n{
+    font-size:15px;font-weight:600;
+    width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    margin:0 auto;
+  }
+  .date-chip.today .n{background:var(--marigold);color:var(--forest-deep);}
+
+  .ring-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom:8px;
+    position:relative;
+  }
+  .ring-center{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+  }
+  .ring-center .n{
+    font-family:'Fraunces',serif;
+    font-size:44px;
+    font-weight:600;
+  }
+  .ring-center .l{
+    font-size:13px;
+    color:#C9C2AC;
+    margin-top:2px;
+  }
+
+  .macro-cards{
+    display:flex;
+    gap:10px;
+    padding:0 22px;
+    margin-top:-22px;
+    position:relative;
+    z-index:2;
+  }
+  .mcard{
+    flex:1;
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:14px 10px;
+    text-align:center;
+    box-shadow:0 8px 20px -12px rgba(33,43,29,.25);
+  }
+  .mcard .emoji{font-size:20px;}
+  .mcard .val{font-size:17px;font-weight:700;color:var(--forest-deep);margin-top:4px;}
+  .mcard .lab{font-size:11.5px;color:var(--ink-soft);margin-top:1px;}
+  .mcard .bar{height:4px;background:var(--line);border-radius:4px;margin-top:8px;overflow:hidden;}
+  .mcard .bar i{display:block;height:100%;border-radius:4px;}
+
+  .section-title{
+    font-size:19px;
+    margin:30px 22px 12px;
+    color:var(--forest-deep);
+  }
+  .log-list{padding:0 22px;display:flex;flex-direction:column;gap:10px;}
+  .empty-card{
+    margin:0 22px;
+    background:var(--white);
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius-md);
+    padding:30px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .food-item{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow:0 6px 16px -12px rgba(33,43,29,.2);
+  }
+  .food-thumb{
+    width:52px;height:52px;
+    border-radius:14px;
+    object-fit:cover;
+    background:var(--cream-2);
+    flex-shrink:0;
+  }
+  .food-info{flex:1;min-width:0;}
+  .food-name{font-weight:600;font-size:15px;color:var(--forest-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .food-meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .food-kcal{font-weight:700;color:var(--forest);font-size:15px;white-space:nowrap;}
+  .del-x{
+    background:none;border:none;color:var(--ink-soft);font-size:18px;cursor:pointer;padding:4px;
+  }
+
+  .fab{
+    position:fixed;
+    bottom:26px;
+    left:50%;
+    transform:translateX(-50%);
+    width:64px;height:64px;
+    border-radius:50%;
+    background:var(--forest-deep);
+    color:var(--marigold-soft);
+    border:none;
+    font-size:30px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 24px -8px rgba(33,43,29,.5);
+    cursor:pointer;
+    max-width:480px;
+    margin:0 auto;
+    z-index:20;
+  }
+  .fab:active{transform:translateX(-50%) scale(.94);}
+
+  /* analyzing overlay */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(33,43,29,.92);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:var(--cream);
+    z-index:50;
+    text-align:center;
+    padding:30px;
+  }
+  .spinner{
+    width:52px;height:52px;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.2);
+    border-top-color:var(--marigold);
+    animation:spin 0.9s linear infinite;
+    margin-bottom:20px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .overlay img{
+    width:120px;height:120px;
+    object-fit:cover;
+    border-radius:20px;
+    margin-bottom:20px;
+  }
+  .overlay .msg{font-size:15.5px;color:#D7D0BB;}
+
+  /* result-of-scan sheet */
+  .sheet-backdrop{
+    position:fixed;inset:0;
+    background:rgba(33,43,29,.45);
+    z-index:40;
+    display:flex;
+    align-items:flex-end;
+  }
+  .sheet{
+    background:var(--cream);
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    border-radius:28px 28px 0 0;
+    padding:22px 22px 28px;
+    animation:slideUp .3s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .sheet-handle{
+    width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 18px;
+  }
+  .sheet-food-row{display:flex;gap:14px;align-items:center;margin-bottom:18px;}
+  .sheet-thumb{width:64px;height:64px;border-radius:16px;object-fit:cover;}
+  .sheet-name-input{
+    font-family:'Fraunces',serif;
+    font-size:20px;font-weight:600;
+    border:none;background:transparent;
+    color:var(--forest-deep);
+    outline:none;
+    width:100%;
+  }
+  .sheet-kcal-input{
+    font-size:14px;color:var(--marigold);
+    border:none;background:transparent;outline:none;font-weight:600;width:100%;
+  }
+  .err-note{
+    font-size:13px;color:var(--berry);
+    background:#F7E9E5;
+    border-radius:12px;
+    padding:10px 14px;
+    margin-bottom:16px;
+  }
+
+  .field-label{font-size:11px;text-transform:none;color:var(--ink-soft);margin-bottom:4px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ========== ONBOARDING ========== -->
+  <div id="onboarding"></div>
+
+  <!-- ========== HOME ========== -->
+  <div id="home" class="hidden">
+    <div class="home-header">
+      <div class="home-topbar">
+        <div class="brand">KaloNazorat</div>
+        <button class="icon-btn" id="settingsBtn">⚙︎</button>
+      </div>
+      <div class="date-strip" id="dateStrip"></div>
+      <div class="ring-wrap">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="78" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/>
+          <circle id="ringProgress" cx="90" cy="90" r="78" fill="none" stroke="#E3982B" stroke-width="12"
+            stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="0"
+            transform="rotate(-90 90 90)"/>
+        </svg>
+        <div class="ring-center">
+          <div class="n" id="kcalRemaining">0</div>
+          <div class="l">qolgan kaloriya</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="macro-cards">
+      <div class="mcard">
+        <div class="emoji">🍗</div>
+        <div class="val" id="proteinLeft">0g</div>
+        <div class="lab">Qolgan oqsil</div>
+        <div class="bar"><i id="proteinBar" style="background:var(--berry);width:0%"></i></div>
+      </div>
+      <div class="mcard">
+        <div class="emoji">🌾</div>
+        <div class="val" id="carbsLeft">0g</div>
+        <div class="lab">Qolgan uglevod</div>
+        <div class="bar"><i id="carbsBar" style="background:var(--marigold);width:0%"></i></div>
+      </div>
+      <div class="mcard">
+        <div class="emoji">🥑</div>
+        <div class="val" id="fatLeft">0g</div>
+        <div class="lab">Qolgan yog'lar</div>
+        <div class="bar"><i id="fatBar" style="background:var(--forest);width:0%"></i></div>
+      </div>
+    </div>
+
+    <div class="section-title">Bugun iste'mol qilindi</div>
+    <div id="logArea"></div>
+  </div>
+
+  <button class="fab hidden" id="fabAdd">+</button>
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" />
+
+  <div id="overlayRoot"></div>
+</div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const todayKey = ()=> new Date().toISOString().slice(0,10);
+  const uzMonths=['Yan','Fev','Mar','Apr','May','Iyun','Iyul','Avg','Sen','Okt','Noy','Dek'];
+  const uzWeekShort=['Yak','Dush','Sesh','Chor','Pay','Jum','Shan'];
+
+  let profile = null;
+  let todayLog = []; // {id,name,kcal,protein,carbs,fat,img}
+
+  // ---------------- Storage helpers (localStorage — works in any browser) ----------------
+  async function loadProfile(){
+    try{
+      const v = localStorage.getItem('kn_profile');
+      return v ? JSON.parse(v) : null;
+    }catch(e){ return null; }
+  }
+  async function saveProfile(p){
+    localStorage.setItem('kn_profile', JSON.stringify(p));
+  }
+  async function loadLog(dateKey){
+    try{
+      const v = localStorage.getItem('kn_log_'+dateKey);
+      return v ? JSON.parse(v) : [];
+    }catch(e){ return []; }
+  }
+  async function saveLog(dateKey, arr){
+    localStorage.setItem('kn_log_'+dateKey, JSON.stringify(arr));
+  }
+
+  // ---------------- Calorie math ----------------
+  function calcTargets(p){
+    // Mifflin-St Jeor
+    let bmr;
+    if(p.gender==='erkak'){
+      bmr = 10*p.weight + 6.25*p.height - 5*p.age + 5;
+    } else {
+      bmr = 10*p.weight + 6.25*p.height - 5*p.age - 161;
+    }
+    const activityFactors = {kam:1.2, orta:1.375, faol:1.55};
+    let tdee = bmr * (activityFactors[p.activity]||1.375);
+
+    const diff = p.goalWeight - p.weight;
+    let target = tdee;
+    if(diff < -1){ target = tdee - 500; } // ozish
+    else if(diff > 1){ target = tdee + 300; } // ortirish
+    target = Math.max(1200, Math.round(target));
+
+    const protein = Math.round((target*0.30)/4);
+    const carbs = Math.round((target*0.40)/4);
+    const fat = Math.round((target*0.30)/9);
+
+    return {calories: target, protein, carbs, fat};
+  }
+
+  // ---------------- Onboarding ----------------
+  const steps = ['welcome','gender','age','height','weight','goal','activity','result'];
+  let stepIndex = 0;
+  let draft = {gender:null, age:null, height:null, weight:null, goalWeight:null, activity:null};
+
+  function renderOnboardingProgress(container, idx){
+    const total = steps.length - 2; // exclude welcome & result from dots
+    if(idx===0 || idx===steps.length-1) return '';
+    let dots='';
+    for(let i=0;i<total;i++){
+      let cls='onb-dot';
+      if(i < idx-1) cls+=' done';
+      else if(i===idx-1) cls+=' active';
+      dots+=`<div class="${cls}"></div>`;
+    }
+    return `<div class="onb-progress">${dots}</div>`;
+  }
+
+  function renderOnboarding(){
+    const el = $('onboarding');
+    const step = steps[stepIndex];
+    let html = '';
+
+    if(step==='welcome'){
+      html = `
+      <div class="onb-screen">
+        <div class="onb-body" style="display:flex;flex-direction:column;justify-content:center;flex:1;">
+          <div class="onb-eyebrow">Salom!</div>
+          <h1 class="onb-title">Ovqatingizni suratga oling — qolganini biz hisoblaymiz.</h1>
+          <p class="onb-sub">Yosh, bo'y, vazningizni kiriting — kunlik kaloriya me'yoringizni chiqarib beramiz va har bir taomni AI orqali kuzatamiz.</p>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-primary" id="startBtn">Boshlash</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      $('startBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      return;
+    }
+
+    if(step==='gender'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">1-qadam</div>
+        <h1 class="onb-title">Jinsingiz qanday?</h1>
+        <p class="onb-sub">Bu kaloriya hisob-kitobiga ta'sir qiladi.</p>
+        <div class="onb-body">
+          <div class="choice-grid">
+            <div class="choice-card" data-v="erkak">Erkak</div>
+            <div class="choice-card" data-v="ayol">Ayol</div>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" disabled>Davom etish</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const cards = el.querySelectorAll('.choice-card');
+      cards.forEach(c=>c.onclick=()=>{
+        cards.forEach(x=>x.classList.remove('selected'));
+        c.classList.add('selected');
+        draft.gender = c.dataset.v;
+        $('nextBtn').disabled = false;
+      });
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      return;
+    }
+
+    if(step==='age'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">2-qadam</div>
+        <h1 class="onb-title">Necha yoshdasiz?</h1>
+        <p class="onb-sub">Metabolizm tezligini aniqlash uchun kerak.</p>
+        <div class="onb-body">
+          <div class="num-input-wrap">
+            <input class="num-input" id="numAge" type="number" inputmode="numeric" placeholder="24" value="${draft.age||''}"/>
+            <span class="num-unit">yosh</span>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" ${draft.age?'':'disabled'}>Davom etish</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const inp = $('numAge');
+      inp.oninput = ()=>{
+        const v = parseInt(inp.value);
+        draft.age = v>0? v : null;
+        $('nextBtn').disabled = !draft.age;
+      };
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      setTimeout(()=>inp.focus(),100);
+      return;
+    }
+
+    if(step==='height'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">3-qadam</div>
+        <h1 class="onb-title">Bo'yingiz qancha?</h1>
+        <p class="onb-sub">Santimetrda kiriting.</p>
+        <div class="onb-body">
+          <div class="num-input-wrap">
+            <input class="num-input" id="numHeight" type="number" inputmode="numeric" placeholder="166" value="${draft.height||''}"/>
+            <span class="num-unit">sm</span>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" ${draft.height?'':'disabled'}>Davom etish</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const inp = $('numHeight');
+      inp.oninput = ()=>{
+        const v = parseInt(inp.value);
+        draft.height = v>0? v : null;
+        $('nextBtn').disabled = !draft.height;
+      };
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      setTimeout(()=>inp.focus(),100);
+      return;
+    }
+
+    if(step==='weight'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">4-qadam</div>
+        <h1 class="onb-title">Hozirgi vazningiz?</h1>
+        <p class="onb-sub">Kilogrammda kiriting.</p>
+        <div class="onb-body">
+          <div class="num-input-wrap">
+            <input class="num-input" id="numWeight" type="number" inputmode="numeric" placeholder="90" value="${draft.weight||''}"/>
+            <span class="num-unit">kg</span>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" ${draft.weight?'':'disabled'}>Davom etish</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const inp = $('numWeight');
+      inp.oninput = ()=>{
+        const v = parseInt(inp.value);
+        draft.weight = v>0? v : null;
+        $('nextBtn').disabled = !draft.weight;
+      };
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      setTimeout(()=>inp.focus(),100);
+      return;
+    }
+
+    if(step==='goal'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">5-qadam</div>
+        <h1 class="onb-title">Istalgan vazningiz?</h1>
+        <p class="onb-sub">Maqsad vazningizga qarab kunlik me'yor moslashtiriladi.</p>
+        <div class="onb-body">
+          <div class="num-input-wrap">
+            <input class="num-input" id="numGoal" type="number" inputmode="numeric" placeholder="51" value="${draft.goalWeight||''}"/>
+            <span class="num-unit">kg</span>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" ${draft.goalWeight?'':'disabled'}>Davom etish</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const inp = $('numGoal');
+      inp.oninput = ()=>{
+        const v = parseInt(inp.value);
+        draft.goalWeight = v>0? v : null;
+        $('nextBtn').disabled = !draft.goalWeight;
+      };
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = ()=>{ stepIndex++; renderOnboarding(); };
+      setTimeout(()=>inp.focus(),100);
+      return;
+    }
+
+    if(step==='activity'){
+      html = `
+      <div class="onb-screen">
+        ${renderOnboardingProgress(null, stepIndex)}
+        <div class="onb-eyebrow">6-qadam</div>
+        <h1 class="onb-title">Kunlik faolligingiz?</h1>
+        <p class="onb-sub">Ish va harakat darajangizni tanlang.</p>
+        <div class="onb-body">
+          <div class="choice-grid">
+            <div class="choice-card" data-v="kam">Kam harakatchan — asosan o'tirib ishlayman</div>
+            <div class="choice-card" data-v="orta">O'rtacha — kuniga biroz yuraman</div>
+            <div class="choice-card" data-v="faol">Faol — jismoniy mashq/ish bilan band</div>
+          </div>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-ghost" id="backBtn">Orqaga</button>
+          <button class="btn btn-primary" id="nextBtn" disabled>Hisoblash</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      const cards = el.querySelectorAll('.choice-card');
+      cards.forEach(c=>c.onclick=()=>{
+        cards.forEach(x=>x.classList.remove('selected'));
+        c.classList.add('selected');
+        draft.activity = c.dataset.v;
+        $('nextBtn').disabled = false;
+      });
+      $('backBtn').onclick = ()=>{ stepIndex--; renderOnboarding(); };
+      $('nextBtn').onclick = async ()=>{
+        profile = {...draft};
+        const targets = calcTargets(profile);
+        profile.targets = targets;
+        await saveProfile(profile);
+        stepIndex++;
+        renderOnboarding();
+      };
+      return;
+    }
+
+    if(step==='result'){
+      const t = profile.targets;
+      html = `
+      <div class="onb-screen">
+        <div class="onb-eyebrow">Tayyor!</div>
+        <h1 class="onb-title" style="font-size:24px;">Sizning kunlik me'yoringiz hisoblandi</h1>
+        <div class="onb-body" style="padding-top:10px;">
+          <div class="result-card">
+            <div class="result-kcal">${t.calories}</div>
+            <div class="result-label">kunlik kaloriya me'yori (kkal)</div>
+            <div class="macro-row">
+              <div class="macro-pill"><div class="v">${t.protein}g</div><div class="l">Oqsil</div></div>
+              <div class="macro-pill"><div class="v">${t.carbs}g</div><div class="l">Uglevod</div></div>
+              <div class="macro-pill"><div class="v">${t.fat}g</div><div class="l">Yog'</div></div>
+            </div>
+          </div>
+          <p class="onb-sub" style="max-width:none;">Endi bosh sahifadagi + tugmasi orqali ovqatingizni suratga oling — AI kaloriyasini avtomatik hisoblab, shu me'yordan ayirib boradi.</p>
+        </div>
+        <div class="onb-footer">
+          <button class="btn btn-primary" id="goHomeBtn">Boshlaymiz</button>
+        </div>
+      </div>`;
+      el.innerHTML = html;
+      $('goHomeBtn').onclick = ()=>{ el.classList.add('hidden'); showHome(); };
+      return;
+    }
+  }
+
+  // ---------------- Home rendering ----------------
+  function renderDateStrip(){
+    const strip = $('dateStrip');
+    const now = new Date();
+    let html='';
+    for(let i=-4;i<=1;i++){
+      const d = new Date(now);
+      d.setDate(now.getDate()+i);
+      const isToday = i===0;
+      html += `<div class="date-chip ${isToday?'today':''}">
+        <div class="d">${uzWeekShort[d.getDay()]}</div>
+        <div class="n">${String(d.getDate()).padStart(2,'0')}</div>
+      </div>`;
+    }
+    strip.innerHTML = html;
+  }
+
+  function sumLog(){
+    return todayLog.reduce((acc,f)=>{
+      acc.kcal += f.kcal; acc.protein += f.protein; acc.carbs += f.carbs; acc.fat += f.fat;
+      return acc;
+    }, {kcal:0,protein:0,carbs:0,fat:0});
+  }
+
+  function renderTotals(){
+    const t = profile.targets;
+    const used = sumLog();
+    const kcalLeft = Math.max(0, t.calories - used.kcal);
+    const proteinLeft = Math.max(0, t.protein - used.protein);
+    const carbsLeft = Math.max(0, t.carbs - used.carbs);
+    const fatLeft = Math.max(0, t.fat - used.fat);
+
+    $('kcalRemaining').textContent = kcalLeft;
+    $('proteinLeft').textContent = proteinLeft+'g';
+    $('carbsLeft').textContent = carbsLeft+'g';
+    $('fatLeft').textContent = fatLeft+'g';
+
+    $('proteinBar').style.width = Math.min(100,(used.protein/t.protein)*100)+'%';
+    $('carbsBar').style.width = Math.min(100,(used.carbs/t.carbs)*100)+'%';
+    $('fatBar').style.width = Math.min(100,(used.fat/t.fat)*100)+'%';
+
+    const circumference = 2*Math.PI*78;
+    const pct = Math.min(1, used.kcal / t.calories);
+    const offset = circumference * (1-pct);
+    const ring = $('ringProgress');
+    ring.setAttribute('stroke-dasharray', circumference);
+    ring.setAttribute('stroke-dashoffset', circumference - (circumference*pct));
+  }
+
+  function renderLog(){
+    const area = $('logArea');
+    if(todayLog.length===0){
+      area.innerHTML = `<div class="empty-card">Hozircha ma'lumot yo'q!<br/>Bugungi ovqatlaringizni tez suratga olib kuzatishni boshlang.</div>`;
+      return;
+    }
+    let html = '<div class="log-list">';
+    todayLog.slice().reverse().forEach(f=>{
+      html += `<div class="food-item">
+        <img class="food-thumb" src="${f.img}" />
+        <div class="food-info">
+          <div class="food-name">${f.name}</div>
+          <div class="food-meta">B:${f.protein}g · U:${f.carbs}g · Y:${f.fat}g</div>
+        </div>
+        <div class="food-kcal">${f.kcal} kkal</div>
+        <button class="del-x" data-id="${f.id}">✕</button>
+      </div>`;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+    area.querySelectorAll('.del-x').forEach(btn=>{
+      btn.onclick = async ()=>{
+        todayLog = todayLog.filter(f=>f.id!==btn.dataset.id);
+        await saveLog(todayKey(), todayLog);
+        renderTotals();
+        renderLog();
+      };
+    });
+  }
+
+  async function showHome(){
+    $('home').classList.remove('hidden');
+    $('fabAdd').classList.remove('hidden');
+    renderDateStrip();
+    todayLog = await loadLog(todayKey());
+    renderTotals();
+    renderLog();
+  }
+
+  // ---------------- Camera + AI analysis ----------------
+  function fileToBase64(file){
+    return new Promise((res,rej)=>{
+      const r = new FileReader();
+      r.onload = ()=>res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function showOverlay(imgSrc){
+    const root = $('overlayRoot');
+    const msgs = ["Taom aniqlanmoqda…","Kaloriyalar hisoblanmoqda…","Deyarli tayyor…"];
+    let i=0;
+    root.innerHTML = `<div class="overlay" id="ovl">
+      <img src="${imgSrc}"/>
+      <div class="spinner"></div>
+      <div class="msg" id="ovlMsg">${msgs[0]}</div>
+    </div>`;
+    const iv = setInterval(()=>{
+      i=(i+1)%msgs.length;
+      const m = $('ovlMsg');
+      if(m) m.textContent = msgs[i];
+    },1400);
+    return ()=>{ clearInterval(iv); root.innerHTML=''; };
+  }
+
+  function showResultSheet(imgSrc, data, onSave){
+    const root = $('overlayRoot');
+    root.innerHTML = `<div class="sheet-backdrop" id="sheetBackdrop">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        ${data.error? `<div class="err-note">Taomni aniqlab bo'lmadi. Ma'lumotlarni qo'lda kiriting.</div>`:''}
+        ${data._debug? `<div class="err-note" style="font-size:11px;opacity:.8;word-break:break-word;">${data._debug}</div>`:''}
+        <div class="sheet-food-row">
+          <img class="sheet-thumb" src="${imgSrc}"/>
+          <div style="flex:1;">
+            <input class="sheet-name-input" id="editName" value="${data.name||''}" placeholder="Taom nomi"/>
+            <input class="sheet-kcal-input" id="editKcal" type="number" value="${data.calories||0}" placeholder="0"/> kkal
+          </div>
+        </div>
+        <div class="macro-row" style="margin-top:0;">
+          <div class="macro-pill" style="background:var(--cream-2);">
+            <input class="v" id="editProtein" type="number" value="${data.protein_g||0}" style="width:100%;border:none;background:transparent;color:var(--forest-deep);font-family:inherit;font-weight:700;font-size:16px;outline:none;"/>
+            <div class="l" style="color:var(--ink-soft);">Oqsil (g)</div>
+          </div>
+          <div class="macro-pill" style="background:var(--cream-2);">
+            <input class="v" id="editCarbs" type="number" value="${data.carbs_g||0}" style="width:100%;border:none;background:transparent;color:var(--forest-deep);font-family:inherit;font-weight:700;font-size:16px;outline:none;"/>
+            <div class="l" style="color:var(--ink-soft);">Uglevod (g)</div>
+          </div>
+          <div class="macro-pill" style="background:var(--cream-2);">
+            <input class="v" id="editFat" type="number" value="${data.fat_g||0}" style="width:100%;border:none;background:transparent;color:var(--forest-deep);font-family:inherit;font-weight:700;font-size:16px;outline:none;"/>
+            <div class="l" style="color:var(--ink-soft);">Yog' (g)</div>
+          </div>
+        </div>
+        <div class="onb-footer" style="padding-top:22px;">
+          <button class="btn btn-ghost" id="cancelSheet">Bekor qilish</button>
+          <button class="btn btn-primary" id="saveSheet">Qo'shish</button>
+        </div>
+      </div>
+    </div>`;
+    $('cancelSheet').onclick = ()=>{ root.innerHTML=''; };
+    $('saveSheet').onclick = ()=>{
+      const result = {
+        name: $('editName').value || 'Noma\'lum taom',
+        kcal: parseInt($('editKcal').value)||0,
+        protein: parseInt($('editProtein').value)||0,
+        carbs: parseInt($('editCarbs').value)||0,
+        fat: parseInt($('editFat').value)||0,
+      };
+      root.innerHTML='';
+      onSave(result);
+    };
+  }
+
+  // Gemini API key — get your own free key at https://aistudio.google.com/apikey
+  const GEMINI_API_KEY = "AQ.Ab8RN6Ju6ktmNqFPXcQvEqTota32sPqa-6Es0JH-kvpNAURVOg";
+
+  async function analyzeFood(base64, mediaType){
+    const prompt = `Rasmdagi taomni aniqla. Faqat quyidagi formatda, hech qanday qo'shimcha matnsiz, sof JSON qaytar:
+{"name":"taom nomi (o'zbek tilida, qisqa)","calories":number,"protein_g":number,"carbs_g":number,"fat_g":number}
+Agar rasmda taom bo'lmasa yoki aniqlab bo'lmasa: {"error":true,"name":"","calories":0,"protein_g":0,"carbs_g":0,"fat_g":0}
+Faqat bitta porsiya uchun taxminiy qiymatlarni ber.`;
+
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-goog-api-key": GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: mediaType, data: base64 } },
+              { text: prompt }
+            ]
+          }]
+        })
+      }
+    );
+    const data = await response.json();
+
+    if(!response.ok || data.error){
+      const msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP '+response.status);
+      return {error:true, name:'', calories:0, protein_g:0, carbs_g:0, fat_g:0, _debug: msg};
+    }
+
+    let raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    raw = raw.replace(/```json|```/g,'').trim();
+    try{
+      const parsed = JSON.parse(raw);
+      if(!parsed.name && !parsed.calories){
+        parsed._debug = 'Bo\'sh javob keldi: ' + raw.slice(0,200);
+      }
+      return parsed;
+    }catch(e){
+      return {error:true, name:'', calories:0, protein_g:0, carbs_g:0, fat_g:0, _debug: 'JSON xato: '+raw.slice(0,200)};
+    }
+  }
+
+  $('cameraInput').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const base64 = await fileToBase64(file);
+    const mediaType = file.type || 'image/jpeg';
+    const imgSrc = 'data:'+mediaType+';base64,'+base64;
+
+    const closeOverlay = showOverlay(imgSrc);
+    let data;
+    try{
+      data = await analyzeFood(base64, mediaType);
+    }catch(err){
+      data = {error:true, name:'', calories:0, protein_g:0, carbs_g:0, fat_g:0, _debug: 'Tarmoq xatosi: '+(err && err.message ? err.message : String(err))};
+    }
+    closeOverlay();
+
+    showResultSheet(imgSrc, data, async (result)=>{
+      todayLog.push({
+        id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+        name: result.name,
+        kcal: result.kcal,
+        protein: result.protein,
+        carbs: result.carbs,
+        fat: result.fat,
+        img: imgSrc
+      });
+      await saveLog(todayKey(), todayLog);
+      renderTotals();
+      renderLog();
+    });
+
+    $('cameraInput').value = '';
+  });
+
+  $('fabAdd').addEventListener('click', ()=>{
+    $('cameraInput').click();
+  });
+
+  $('settingsBtn').addEventListener('click', ()=>{
+    if(confirm("Profilni qayta sozlashni xohlaysizmi? (Yosh, bo'y, vazn qayta so'raladi)")){
+      stepIndex = 1;
+      draft = {gender:null, age:null, height:null, weight:null, goalWeight:null, activity:null};
+      $('home').classList.add('hidden');
+      $('fabAdd').classList.add('hidden');
+      $('onboarding').classList.remove('hidden');
+      renderOnboarding();
+    }
+  });
+
+  // ---------------- Init ----------------
+  (async function init(){
+    profile = await loadProfile();
+    if(profile && profile.targets){
+      showHome();
+    } else {
+      renderOnboarding();
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>
